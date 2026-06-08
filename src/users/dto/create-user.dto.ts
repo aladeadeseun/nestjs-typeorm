@@ -1,18 +1,20 @@
 /* eslint-disable prettier/prettier */
-import { IsEmail, IsNotEmpty, IsStrongPassword, Max, Min } from "class-validator";
+import { IsEmail, IsNotEmpty, IsStrongPassword, MaxLength, MinLength } from "class-validator";
 
 export class CreateUserDto{
     
-    @Max(30, {message:"Max username is 30"})
-    @Min(3, {message:"Minimum username is 3"})
-    @IsNotEmpty()
+    @MaxLength(30, {message:"Max username is 30"})
+    @MinLength(3, {message:"Minimum username is 3"})
+    @IsNotEmpty({message:"Username is required"})
     readonly username!:string
 
-    @Max(30, {message:"Max username is 30"})
-    @IsEmail()
+    @MaxLength(30, {message:"Max username is 30"})
+    @IsEmail(undefined, {message:"Invalid email address"})
+    @IsNotEmpty({message:"Email is required"})
     readonly email!:string
 
-    @Max(30, {message:"Max username is 30"})
+    
+    @MaxLength(30, {message:"Max password is 30"})
     @IsStrongPassword({
         minLength: 8,
         minUppercase: 1,
@@ -20,16 +22,16 @@ export class CreateUserDto{
         minSymbols: 1,
         minLowercase: 0,
     })
-    @IsNotEmpty()
+    @IsNotEmpty({message:"Password is required"})
     readonly password!:string
 
-    @IsNotEmpty()
-    @Max(50, {message:"Max firstname is 50"})
-    @Min(3, {message:"Minimum firstname is 3"})
+    @MaxLength(50, {message:"Max firstname is 50"})
+    @MinLength(3, {message:"Minimum firstname is 3"})
+    @IsNotEmpty({message:"Firstname is required"})
     readonly firstname!:string
 
-    @IsNotEmpty()
-    @Max(50, {message:"Max lastname is 50"})
-    @Min(3, {message:"Minimum lastname is 3"})
+    @MaxLength(50, {message:"Max lastname is 50"})
+    @MinLength(3, {message:"Minimum lastname is 3"})
+    @IsNotEmpty({message:"Lastname is required"})
     readonly lastname!:string
 }
