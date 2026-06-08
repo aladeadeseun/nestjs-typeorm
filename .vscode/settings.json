@@ -1,0 +1,4 @@
+{
+    "eslint.enable": true,
+    "js/ts.preferences.importModuleSpecifier": "non-relative"
+}

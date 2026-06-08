@@ -1,0 +1,35 @@
+npx @nestjs/cli generate module profiles  
+npx @nestjs/cli generate controller profiles
+npx @nestjs/cli generate service profiles
+
+db:crop - Drop database
+migration:create - Create migration
+migration:run - Apply all new changes
+
+yarn run migration:generate - command added to package.json
+yarn run migration:generate src/migrations/CreateTagAndUser
+
+yarn run migration:generate src/migrations/AddArticleEntity
+yarn run migration:generate src/migrations/AddUsersFavoriteRelation
+
+yarn run migration:run
+
+test@me.com
+ademega4@gmail.com
+test123@me.com
+
+nest g resource profile
+
+Create a module:
+nest g mo users
+
+Create a controller
+nest g co users
+
+Create a service
+nest g s users
+
+Create a complete CRUD resource:
+nest g resource users
+
+

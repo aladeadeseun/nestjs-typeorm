@@ -1,10 +1,7 @@
+/* eslint-disable prettier/prettier */
 import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv';
 import { DataSource } from 'typeorm';
-import { Item } from './src/items/entities/item.entity';
-import { Listing } from './src/items/entities/listing.entity';
-import { Comment } from './src/items/entities/comment.entity';
-import { Tag } from './src/items/entities/tag.entity';
 
 config();
 
@@ -17,6 +14,7 @@ export default new DataSource({
   database: configService.getOrThrow('MYSQL_DATABASE'),
   username: configService.getOrThrow('MYSQL_USERNAME'),
   password: configService.getOrThrow('MYSQL_PASSWORD'),
-  migrations: ['migrations/**'],
-  entities: [Item, Listing, Comment, Tag],
+  entities: [__dirname + '/**/*.entity.{ts,js}'],
+  migrationsTableName:'migrations',
+  migrations:[__dirname + '/migrations/**/*{.js,.ts}'],
 });
