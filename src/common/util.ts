@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
 
+import { User } from "@/users/entities/user.entity";
+
 export function formatErrors(validationErrors: any[], errors: Record<string, any> = {}) {
     
-    console.log(errors)
-
     validationErrors.forEach((error) => {
         if(error.constraints) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -18,4 +18,11 @@ export function formatErrors(validationErrors: any[], errors: Record<string, any
     return errors;
 }
 
-//export function sendSuccessResponse
+export function removePassword(user: User | null) {
+    
+    if(!user) return user
+
+    delete user.password
+
+    return user
+}

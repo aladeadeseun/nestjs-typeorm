@@ -1,12 +1,11 @@
 /* eslint-disable prettier/prettier */
+import { removePassword } from '@/common/util';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
-import { LoginUserDto } from '@/users/dto/login-user.dto';
 import { Profile } from '@/users/entities/profile.entity';
 import { User } from '@/users/entities/user.entity';
-import { HttpException, HttpStatus, Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { compare } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
+
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -23,22 +22,6 @@ export class UsersService {
             .select(toSelect)
             .where('users.email = :value', { value:email })
             .orWhere('users.username = :value', { value:username })
-    }
-
-    private generateToken(user: User): string{
-        return sign({
-            id:user.id,
-            //username:user.username,
-            //email:user.email
-        }, process.env.JWT_SECRET!)
-    }
-
-    private generateResponse(user: User, generateToken: boolean) {
-        delete user.password
-        return generateToken ? {
-            ...user,
-            token:this.generateToken(user)
-        } : user
     }
 
     getAllUser(){
@@ -76,43 +59,21 @@ export class UsersService {
 
         return {
             message:"User successfully created",
-            data:this.generateResponse(
-                await this.usersRepository.save(user), 
-                false
-            )
+            data:removePassword(await this.usersRepository.save(user))
         }
     }
 
-    async loginUserIn({usernameOrEmail, password}: LoginUserDto){
-
-        if(
-            !usernameOrEmail 
-            || (typeof(usernameOrEmail) !== "string")
-            || (usernameOrEmail.length < 3) 
-            || (usernameOrEmail.length > 30) 
-            || !password 
-            || (typeof(password) !== "string")
-            || (password.length < 8) 
-            || (password.length > 30)
-        ) 
-            throw new HttpException({success:false, message:"Invalid login detail"}, HttpStatus.UNAUTHORIZED)
-
-        const user = await this.usersRepository.createQueryBuilder('users')
+    getOneUserByEmailOrUsername(usernameOrEmail: string){
+        return this.usersRepository.createQueryBuilder('users')
             .select(["users.email", "users.username", "users.id", "users.password", "users.lastname", "users.firstname"])
             .where('users.email = :value', { value:usernameOrEmail })
             .orWhere('users.username = :value', { value:usernameOrEmail })
-            .leftJoinAndSelect("users.profile", "profile").getOne()
+            .leftJoinAndSelect("users.profile", "profile").getOne()   
+    }
 
-        console.log(user)
-
-        //console.log(loginUserDto.password, user?.password)
-
-        if(!user || !(await compare(password, user.password!))) 
-            throw new HttpException({success:false, message:"Invalid login detail."}, HttpStatus.UNAUTHORIZED)
-
-        return {
-            data:this.generateResponse(user, true),
-            message:"You have being successfully logged in."
-        }
+    async getOneUserWithProfileById(id:string){
+        return removePassword(
+            await this.usersRepository.findOne({where:{id:parseInt(id)}, relations:{profile:true}})
+        )
     }
 }

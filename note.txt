@@ -33,3 +33,8 @@ Create a complete CRUD resource:
 nest g resource users
 
 
+ademega4
+P@s$w0rd
+
+mega99
+P@s$w0rd
