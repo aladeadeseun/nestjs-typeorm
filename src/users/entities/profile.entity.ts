@@ -4,13 +4,16 @@ import {
 	Column,
 	OneToOne,
 	JoinColumn,
+	PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { User } from './user.entity';
-import { AbstractEntity } from '../../database/abstract.entity';
 
 @Entity({ name: "profiles" })
-export class Profile extends AbstractEntity {
+export class Profile  {
+
+	@PrimaryGeneratedColumn({unsigned:true, type:"integer"})
+	id!: number;
 
 	@Column({ type: "text", nullable: true })
 	bio!: string;

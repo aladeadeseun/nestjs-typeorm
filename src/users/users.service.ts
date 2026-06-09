@@ -1,9 +1,11 @@
 /* eslint-disable prettier/prettier */
 import { CreateUserDto } from '@/users/dto/create-user.dto';
+import { LoginUserDto } from '@/users/dto/login-user.dto';
 import { Profile } from '@/users/entities/profile.entity';
 import { User } from '@/users/entities/user.entity';
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 
@@ -68,14 +70,49 @@ export class UsersService {
             throw new UnprocessableEntityException({success:false, errors, message:"Validation error"})
         }
 
+        const user = new User();
+
+        Object.assign(user, createUserDto)
+
         return {
             message:"User successfully created",
             data:this.generateResponse(
-                await this.usersRepository.save(
-                    User.createInstance(createUserDto)
-                ), 
-                true
+                await this.usersRepository.save(user), 
+                false
             )
+        }
+    }
+
+    async loginUserIn({usernameOrEmail, password}: LoginUserDto){
+
+        if(
+            !usernameOrEmail 
+            || (typeof(usernameOrEmail) !== "string")
+            || (usernameOrEmail.length < 3) 
+            || (usernameOrEmail.length > 30) 
+            || !password 
+            || (typeof(password) !== "string")
+            || (password.length < 8) 
+            || (password.length > 30)
+        ) 
+            throw new HttpException({success:false, message:"Invalid login detail"}, HttpStatus.UNAUTHORIZED)
+
+        const user = await this.usersRepository.createQueryBuilder('users')
+            .select(["users.email", "users.username", "users.id", "users.password", "users.lastname", "users.firstname"])
+            .where('users.email = :value', { value:usernameOrEmail })
+            .orWhere('users.username = :value', { value:usernameOrEmail })
+            .leftJoinAndSelect("users.profile", "profile").getOne()
+
+        console.log(user)
+
+        //console.log(loginUserDto.password, user?.password)
+
+        if(!user || !(await compare(password, user.password!))) 
+            throw new HttpException({success:false, message:"Invalid login detail."}, HttpStatus.UNAUTHORIZED)
+
+        return {
+            data:this.generateResponse(user, true),
+            message:"You have being successfully logged in."
         }
     }
 }

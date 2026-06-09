@@ -7,15 +7,18 @@ import {
     BeforeInsert,
     BeforeUpdate,
     Index,
+    PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Profile } from './profile.entity';
 import { hash } from 'bcrypt';
-import { AbstractEntity } from '../../database/abstract.entity';
 
 @Entity({ name: "users" })
 @Index('IDX_USERS_EMAIL', ['email'], { unique: true })
 @Index('IDX_USERS_USERNAME', ['username'], { unique: true })
-export class User extends AbstractEntity {
+export class User  {
+
+    @PrimaryGeneratedColumn({unsigned:true, type:"integer"})
+    id!: number;
 
     @Column({ length: 60, nullable: false })
     firstname!: string;
@@ -39,6 +42,7 @@ export class User extends AbstractEntity {
     @BeforeUpdate()
     async hasPassword() {
         if (this.password) {
+            console.log(this.password)
             //const salt = await bcrypt.genSalt(10)
             this.password = await hash(this.password.trim(), 10)
         }
