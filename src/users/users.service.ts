@@ -65,7 +65,7 @@ export class UsersService {
         }
 
         if(Object.keys(errors).length > 0){
-            throw new UnprocessableEntityException(errors)
+            throw new UnprocessableEntityException({success:false, errors, message:"Validation error"})
         }
 
         return {

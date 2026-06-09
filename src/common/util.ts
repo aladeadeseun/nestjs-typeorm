@@ -1,6 +1,9 @@
 /* eslint-disable prettier/prettier */
 
 export function formatErrors(validationErrors: any[], errors: Record<string, any> = {}) {
+    
+    console.log(errors)
+
     validationErrors.forEach((error) => {
         if(error.constraints) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
