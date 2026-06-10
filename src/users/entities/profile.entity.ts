@@ -5,6 +5,7 @@ import {
 	OneToOne,
 	JoinColumn,
 	PrimaryGeneratedColumn,
+	BeforeUpdate,
 } from 'typeorm';
 
 import { User } from './user.entity';
@@ -24,4 +25,17 @@ export class Profile  {
 	@OneToOne(() => User, (user: User) => user.profile, { cascade: true })
 	@JoinColumn()
 	user!: User;
+
+	// @UpdateDateColumn({type:'timestamp'})
+	// updatedAt!:Date
+	@Column({ type:"timestamp", default: () => 'CURRENT_TIMESTAMP'})
+	createdAt!: Date
+
+	@Column({ type:"timestamp", default: () => 'CURRENT_TIMESTAMP'})
+	updatedAt!: Date
+
+	@BeforeUpdate()
+	updateTimestamp(){
+		this.updatedAt = new Date()
+	}
 }

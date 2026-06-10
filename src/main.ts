@@ -6,10 +6,15 @@ import { UnprocessableEntityException, ValidationPipe } from '@nestjs/common';
 import { formatErrors } from '@/common/util';
 import { ResponseInterceptor } from '@/common/interceptors/response.interceptor';
 import { GlobalExceptionFilter } from '@/common/filters/global-exception.filter';
+import helmet from 'helmet';
+import { CORS_ORIGIN } from '@/common/constant';
 
 async function bootstrap() {
 
 	const app = await NestFactory.create(AppModule);
+	// somewhere in your initialization file
+	app.use(helmet());
+	app.enableCors({origin:CORS_ORIGIN,credentials: true})
 	
 	app.useGlobalPipes(
 		new ValidationPipe({

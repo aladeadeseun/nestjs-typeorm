@@ -6,16 +6,32 @@ import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+import { NODE_ENV } from '@/common/constant';
 
 @Module({
 	imports: [
+		ThrottlerModule.forRoot({
+			throttlers: [
+				{
+					ttl: 60_000, //1 minute
+					limit: NODE_ENV === "development" ? 1_000 : 10, //can only make 10 request
+				},
+			],
+		}),
 		ConfigModule.forRoot({ isGlobal: true }),
 		DatabaseModule,
 		UsersModule,
 		AuthModule,
-
 	],
 	controllers: [AppController],
-	providers: [AppService],
+	providers: [
+		AppService,
+		{
+      		provide: APP_GUARD,
+      		useClass: ThrottlerGuard,
+    	},
+	],
 })
 export class AppModule { }

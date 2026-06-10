@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { AuthService } from '@/auth/auth.service';
 import { Public } from '@/auth/decorator/is-public';
-import { User } from '@/auth/decorator/user.decorator';
+import { CurrentUser } from '@/auth/decorator/current-user.decorator';
 import type { LoginUserDto } from '@/auth/dto/login-user.dto';
 import type { IUser } from '@/type';
 import { Body, Controller, Get, Post } from '@nestjs/common';
@@ -17,7 +17,7 @@ export class AuthController {
     }
 
     @Get("current-user")
-    getCurrentUser(@User() user:IUser){
+    getCurrentUser(@CurrentUser() user:IUser){
         return user
     }
 }

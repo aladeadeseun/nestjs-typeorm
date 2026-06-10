@@ -7,7 +7,7 @@ config();
 
 const configService = new ConfigService();
 
-export default new DataSource({
+export const ormConfig= new DataSource({
   type: 'mysql',
   host: configService.getOrThrow('MYSQL_HOST'),
   port: configService.getOrThrow('MYSQL_PORT'),
@@ -17,4 +17,5 @@ export default new DataSource({
   entities: [__dirname + '/**/*.entity.{ts,js}'],
   migrationsTableName:'migrations',
   migrations:[__dirname + '/migrations/**/*{.js,.ts}'],
+  synchronize:false
 });

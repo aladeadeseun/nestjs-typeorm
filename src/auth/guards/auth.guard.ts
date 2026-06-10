@@ -39,8 +39,10 @@ export class AuthGuard implements CanActivate {
         const token = this.extractTokenFromHeader(request);
 
         if (!token) {
-            throw new HttpException({
-                success:false, message:"Your session has expired or is invalid. Please log in again."}, HttpStatus.UNAUTHORIZED)
+            throw new HttpException(
+                {success:false, message:"Your session has expired or is invalid. Please log in again."}, 
+                HttpStatus.UNAUTHORIZED
+            )
         }
 
         try {

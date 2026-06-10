@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { removePassword } from '@/common/util';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
+import { SaveBioDto } from '@/users/dto/save-bio.dto';
 import { Profile } from '@/users/entities/profile.entity';
 import { User } from '@/users/entities/user.entity';
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
@@ -14,7 +15,7 @@ export class UsersService {
         @InjectRepository(User)
         private readonly usersRepository: Repository<User>,
         @InjectRepository(Profile)
-        private readonly profilesRepository: Repository<User>,
+        private readonly profilesRepository: Repository<Profile>,
     ){}
 
     private selectUserByEmailOrUsernameQueryBuilder(email: string, username: string, toSelect:string[]){
@@ -75,5 +76,31 @@ export class UsersService {
         return removePassword(
             await this.usersRepository.findOne({where:{id:parseInt(id)}, relations:{profile:true}})
         )
+    }
+
+    async saveUserBio(user: User, bio: SaveBioDto){
+        
+        let profile: Profile | null = null
+
+        if(!user.profile){
+            profile = new Profile()
+            profile.user = user
+        }else{
+            profile = user.profile
+        }
+        
+        Object.assign(profile, bio)
+
+        profile = await this.profilesRepository.save(profile)
+
+        delete (profile as any).user
+
+        user.profile = profile
+
+        //save in database
+        return {
+            message:"User bio data successfully saved",
+            data:user
+        }
     }
 }

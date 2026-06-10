@@ -47,4 +47,17 @@ export class User  {
             this.password = await hash(this.password.trim(), 10)
         }
     }
+
+    // @UpdateDateColumn({type:'timestamp'})
+    // updatedAt!:Date
+    @Column({ type:"timestamp", default: () => 'CURRENT_TIMESTAMP'})
+    createdAt!: Date
+
+    @Column({ type:"timestamp", default: () => 'CURRENT_TIMESTAMP'})
+    updatedAt!: Date
+
+    @BeforeUpdate()
+    updateTimestamp(){
+        this.updatedAt = new Date()
+    }
 }
