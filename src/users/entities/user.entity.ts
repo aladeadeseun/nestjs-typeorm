@@ -8,9 +8,11 @@ import {
     BeforeUpdate,
     Index,
     PrimaryGeneratedColumn,
+    OneToMany,
 } from 'typeorm';
 import { Profile } from './profile.entity';
 import { hash } from 'bcrypt';
+import { Post } from '../../posts/entities/post.entity';
 
 @Entity({ name: "users" })
 @Index('IDX_USERS_EMAIL', ['email'], { unique: true })
@@ -47,6 +49,9 @@ export class User  {
             this.password = await hash(this.password.trim(), 10)
         }
     }
+
+    @OneToMany(() => Post, (post) => post.author)
+    posts!:Post[]
 
     // @UpdateDateColumn({type:'timestamp'})
     // updatedAt!:Date

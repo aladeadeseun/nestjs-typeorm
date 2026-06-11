@@ -1,3 +1,6 @@
+import { Post } from '@/posts/entities/post.entity';
+import { Profile } from '@/users/entities/profile.entity';
+import { User } from '@/users/entities/user.entity';
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,7 +15,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         database: configService.getOrThrow('MYSQL_DATABASE'),
         username: configService.getOrThrow('MYSQL_USERNAME'),
         password: configService.getOrThrow('MYSQL_PASSWORD'),
-        autoLoadEntities: true,
+        entities: [User, Profile, Post],
+        //autoLoadEntities: true,
         synchronize: false,
       }),
       inject: [ConfigService],

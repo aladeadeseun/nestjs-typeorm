@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { NODE_ENV } from '@/common/constant';
+import { PostsModule } from './posts/posts.module';
 
 @Module({
 	imports: [
@@ -24,6 +25,7 @@ import { NODE_ENV } from '@/common/constant';
 		DatabaseModule,
 		UsersModule,
 		AuthModule,
+		PostsModule,
 	],
 	controllers: [AppController],
 	providers: [
