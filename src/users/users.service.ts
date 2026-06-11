@@ -4,8 +4,11 @@ import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { SaveBioDto } from '@/users/dto/save-bio.dto';
 import { Profile } from '@/users/entities/profile.entity';
 import { User } from '@/users/entities/user.entity';
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, NotFoundException, StreamableFile, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { createReadStream, ReadStream } from 'fs';
+import { unlink } from 'node:fs/promises';
+import { join } from 'path';
 
 import { Repository } from 'typeorm';
 
@@ -72,14 +75,7 @@ export class UsersService {
             .leftJoinAndSelect("users.profile", "profile").getOne()   
     }
 
-    async getOneUserWithProfileById(id:string){
-        return removePassword(
-            await this.usersRepository.findOne({where:{id:parseInt(id)}, relations:{profile:true}})
-        )
-    }
-
-    async saveUserBio(user: User, bio: SaveBioDto){
-        
+    private async updateProfile(user: User, data: SaveBioDto | {image: string}){
         let profile: Profile | null = null
 
         if(!user.profile){
@@ -89,7 +85,15 @@ export class UsersService {
             profile = user.profile
         }
         
-        Object.assign(profile, bio)
+        //this is updating profile avatar
+        if("image" in data && user.profile.image){
+            //I want to delete previous profile picture
+            //I don't need to await the deletion of the file, don't wait.
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            unlink(join(process.cwd(), user.profile.image))
+        }
+        
+        Object.assign(profile, data)
 
         profile = await this.profilesRepository.save(profile)
 
@@ -99,8 +103,38 @@ export class UsersService {
 
         //save in database
         return {
-            message:"User bio data successfully saved",
+            message:"User profile successfully updated",
             data:user
         }
+    }
+
+    async getOneUserWithProfileById(id:string){
+        return removePassword(
+            await this.usersRepository.findOne({where:{id:parseInt(id)}, relations:{profile:true}})
+        )
+    }
+
+    async updateUserProfileBio(user: User, bio: SaveBioDto){
+        return this.updateProfile(user, bio)
+    }
+
+    async updateUserProfileAvatar(user: User, pathToAvatar: string){
+        return this.updateProfile(user, {image:pathToAvatar})
+    }
+
+    serveProfileAvatar(user: User): StreamableFile{
+        if(!user.profile || !user.profile.image){
+            throw new NotFoundException("Profile avatar not found")
+        }
+        //if()
+        let stream: ReadStream
+        
+        try{
+            stream = createReadStream(join(process.cwd(), user.profile.image))
+        }
+        catch{
+            throw new NotFoundException("Profile avatar not found")
+        }
+        return new StreamableFile(stream, {type:'image/jpeg'})
     }
 }

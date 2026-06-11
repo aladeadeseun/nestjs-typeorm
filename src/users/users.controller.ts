@@ -4,11 +4,14 @@ import { CurrentUser } from '@/auth/decorator/current-user.decorator';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { SaveBioDto } from '@/users/dto/save-bio.dto';
 import { UsersService } from '@/users/users.service';
-import { Body, Controller, Get, Post, UnprocessableEntityException, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Post, StreamableFile, UnprocessableEntityException, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { User } from '@/users/entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from "multer"
 import { extname } from 'path';
+import { AVATAR_UPLOAD_DIR, MAX_AVATAR_SIZE } from '@/common/constant';
+
+
 @Controller('users')
 export class UsersController {
     
@@ -30,7 +33,7 @@ export class UsersController {
     @UsePipes(new ValidationPipe())
     @Post("profile/save-bio")
     saveProfile(@Body() bio:SaveBioDto, @CurrentUser() user: User){
-        return this.userService.saveUserBio(user, bio)
+        return this.userService.updateUserProfileBio(user, bio)
     }
 
     // @UsePipes(
@@ -50,7 +53,7 @@ export class UsersController {
     @UseInterceptors(
         FileInterceptor('avatar', {
             storage: diskStorage({
-                destination: './uploads/avatars',
+                destination: AVATAR_UPLOAD_DIR,
                 filename: (_req, file, callback) => {
                     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
                     const ext = extname(file.originalname);
@@ -61,20 +64,23 @@ export class UsersController {
                 if (['image/jpeg', 'image/png'].includes(file.mimetype)) {
                     callback(null, true);
                 } else {
-                    callback(new UnprocessableEntityException('Only JPEG or PNG images are allowed'), false);
+                    callback(new UnprocessableEntityException({
+                        errors:{avatar:['Only JPEG or PNG images are allowed']},
+                        message:"Invalid user input."
+                    }), false);
                 }
             },
-            limits:{fileSize:1 * 1024}
+            limits:{fileSize:MAX_AVATAR_SIZE}
         }),
     )
     @Post('profile/avatar')
-    uploadFile(
-        @UploadedFile()
-        file: Express.Multer.File
-    ) {
-        console.log(file);
+    uploadFile(@UploadedFile() file: Express.Multer.File, @CurrentUser() user: User) {
+        return this.userService.updateUserProfileAvatar(user, file.path)
+    }
 
-        return {message:"avatar uploaded successfully"}
+    @Get("profile/avatar")
+    serveAvatar(@CurrentUser() user: User): StreamableFile{
+        return this.userService.serveProfileAvatar(user)
     }
 
 }
