@@ -14,6 +14,7 @@ import { Profile } from './profile.entity';
 import { hash } from 'bcrypt';
 import { Post } from '../../posts/entities/post.entity';
 import {Comment} from "../../comments/entities/comment.entity"
+import { UserFollow } from '../../user-follows/entities/user-follow.entity';
 
 @Entity({ name: "users" })
 @Index('IDX_USERS_EMAIL', ['email'], { unique: true })
@@ -50,6 +51,12 @@ export class User  {
             this.password = await hash(this.password.trim(), 10)
         }
     }
+
+    @OneToMany(() => UserFollow, (userFollow) => userFollow.follower)
+    followers!:UserFollow[]
+
+    @OneToMany(() => UserFollow, (userFollow) => userFollow.following)
+    followings!:UserFollow[]
 
     @OneToMany(() => Post, (post) => post.author)
     posts!:Post[]

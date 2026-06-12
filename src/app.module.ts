@@ -11,6 +11,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { NODE_ENV } from '@/common/constant';
 import { PostsModule } from './posts/posts.module';
 import { CommentsModule } from './comments/comments.module';
+import { UserFollowsModule } from './user-follows/user-follows.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
 	imports: [
@@ -28,6 +30,8 @@ import { CommentsModule } from './comments/comments.module';
 		AuthModule,
 		PostsModule,
 		CommentsModule,
+		UserFollowsModule,
+		NotificationsModule,
 	],
 	controllers: [AppController],
 	providers: [

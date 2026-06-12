@@ -1,31 +1,27 @@
 /* eslint-disable prettier/prettier */
 
-import { Post } from "../../posts/entities/post.entity";
+
 import { User } from "../../users/entities/user.entity";
 import { BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({ name: "comments" })
-export class Comment  {
-
+@Entity({ name: "user_follows" })
+export class UserFollow  {
     @PrimaryGeneratedColumn({unsigned:true, type:"integer"})
     id!: number;
 
-    @ManyToOne(() => User, (user) => user.comments)
-    @JoinColumn({ name :"authorId" })
-    author!:User
+    @ManyToOne(() => User, (user) => user.followings)
+    @JoinColumn({ name :"followingId" })
+    following!:User
 
-    @ManyToOne(() => Post, (post) => post.comments)
-    @JoinColumn({ name :"postId" })
-    post!:Post
+    @ManyToOne(() => User, (user)=>user.followers)
+    @JoinColumn({name:"followerId"})
+    follower!:User
 
     @Column({ type:"timestamp", default: () => 'CURRENT_TIMESTAMP'})
     createdAt!: Date
 
     @Column({ type:"timestamp", default: () => 'CURRENT_TIMESTAMP'})
     updatedAt!: Date
-
-    @Column({type:"text"})
-    content!:string
 
     @BeforeUpdate()
     updateTimestamp(){

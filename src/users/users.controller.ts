@@ -4,18 +4,23 @@ import { CurrentUser } from '@/auth/decorator/current-user.decorator';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { SaveBioDto } from '@/users/dto/save-bio.dto';
 import { UsersService } from '@/users/users.service';
-import { Body, Controller, Get, Post, StreamableFile, UnprocessableEntityException, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, StreamableFile, UnprocessableEntityException, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { User } from '@/users/entities/user.entity';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from "multer"
 import { extname } from 'path';
 import { AVATAR_UPLOAD_DIR, MAX_AVATAR_SIZE } from '@/common/constant';
+import { UserFollowsService } from '@/user-follows/user-follows.service';
+import { ValidateIdPipe } from '@/validator/validate-id.pipe';
 
 
 @Controller('users')
 export class UsersController {
     
-    constructor(private readonly userService: UsersService){}
+    constructor(
+        private readonly userService: UsersService,
+        private readonly userFollowService: UserFollowsService
+    ){}
 
     @Get()
     fetchAll(){
@@ -83,4 +88,8 @@ export class UsersController {
         return this.userService.serveProfileAvatar(user)
     }
 
+    @Patch("/:followingId/follow")
+    toggleUserFollow(@CurrentUser() user:User, @Param("followingId", ValidateIdPipe) followingId: number){
+        return this.userFollowService.toggleFollow(followingId, user)
+    }
 }
