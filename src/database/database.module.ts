@@ -1,3 +1,4 @@
+import { Comment } from '@/comments/entities/comment.entity';
 import { Post } from '@/posts/entities/post.entity';
 import { Profile } from '@/users/entities/profile.entity';
 import { User } from '@/users/entities/user.entity';
@@ -15,7 +16,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         database: configService.getOrThrow('MYSQL_DATABASE'),
         username: configService.getOrThrow('MYSQL_USERNAME'),
         password: configService.getOrThrow('MYSQL_PASSWORD'),
-        entities: [User, Profile, Post],
+        entities: [User, Profile, Post, Comment],
         //autoLoadEntities: true,
         synchronize: false,
       }),

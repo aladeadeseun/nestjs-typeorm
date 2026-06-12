@@ -10,6 +10,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { NODE_ENV } from '@/common/constant';
 import { PostsModule } from './posts/posts.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
 	imports: [
@@ -26,6 +27,7 @@ import { PostsModule } from './posts/posts.module';
 		UsersModule,
 		AuthModule,
 		PostsModule,
+		CommentsModule,
 	],
 	controllers: [AppController],
 	providers: [

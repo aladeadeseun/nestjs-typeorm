@@ -1,11 +1,11 @@
 /* eslint-disable prettier/prettier */
 
-import { Comment } from "../../comments/entities/comment.entity";
+import { Post } from "../../posts/entities/post.entity";
 import { User } from "../../users/entities/user.entity";
-import { BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity({ name: "posts" })
-export class Post  {
+@Entity({ name: "comments" })
+export class Comment  {
 
     @PrimaryGeneratedColumn({unsigned:true, type:"integer"})
     id!: number;
@@ -13,6 +13,10 @@ export class Post  {
     @ManyToOne(() => User, (user) => user.posts)
     @JoinColumn({ name :"authorId" })
     author!:User
+
+    @ManyToOne(() => Post, (post) => post.comments)
+    @JoinColumn({ name :"postId" })
+    post!:Post
 
     @Column({ type:"timestamp", default: () => 'CURRENT_TIMESTAMP'})
     createdAt!: Date
@@ -22,9 +26,6 @@ export class Post  {
 
     @Column({type:"text"})
     content!:string
-
-    @OneToMany(() => Comment, (comment) => comment.post)
-    comments!:Comment[]
 
     @BeforeUpdate()
     updateTimestamp(){
