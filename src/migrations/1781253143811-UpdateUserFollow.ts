@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+
 import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class UpdateUserFollow1781253143811 implements MigrationInterface {

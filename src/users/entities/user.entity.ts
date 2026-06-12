@@ -15,6 +15,7 @@ import { hash } from 'bcrypt';
 import { Post } from '../../posts/entities/post.entity';
 import {Comment} from "../../comments/entities/comment.entity"
 import { UserFollow } from '../../user-follows/entities/user-follow.entity';
+import { Notification } from '../../notifications/entities/notification.entity';
 
 @Entity({ name: "users" })
 @Index('IDX_USERS_EMAIL', ['email'], { unique: true })
@@ -63,6 +64,12 @@ export class User  {
 
     @OneToMany(() => Comment, (comment) => comment.author)
     comments!:Comment[]
+
+    @OneToMany(() => Notification, (notification) => notification.actor)
+    actors!:Notification[]
+
+    @OneToMany(() => Notification, (notification) => notification.recipient)
+    recipients!:Notification[]
 
     // @UpdateDateColumn({type:'timestamp'})
     // updatedAt!:Date

@@ -3,6 +3,8 @@
 import { CreateComment } from '@/comments/dto/create-comment.dto';
 import { UpdateComment } from '@/comments/dto/update-comment.dto';
 import { Comment } from '@/comments/entities/comment.entity';
+import { NotificationType } from '@/notifications/enum/notification-type.enum';
+import { NotificationsService } from '@/notifications/notifications.service';
 import { Post } from '@/posts/entities/post.entity';
 import { User } from '@/users/entities/user.entity';
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
@@ -16,6 +18,8 @@ export class CommentsService {
         private readonly commentsRepository: Repository<Comment>,
         @InjectRepository(Post)
         private readonly postsRepository: Repository<Post>,
+
+        private notificationService:NotificationsService
     ){}
 
     private async getCommentToUpdate(commentId: number, user: User){
@@ -52,7 +56,7 @@ export class CommentsService {
         //first get post by post id
         const post = await this.postsRepository.findOne({
             where:{id:postId},
-            select:{id:true}
+            select:{id:true, author:{id:true}}, relations:{author:true}
         })
         if(!post)
             throw new NotFoundException({message:"Post cannot be found."})
@@ -63,6 +67,15 @@ export class CommentsService {
 
         comment.post = post
         comment.author =user
+
+        //add the notification but don't wait for response, this should be added to job queue
+        //to be added late
+        try{
+            await this.notificationService.createNotification(user, post.author.id, NotificationType.COMMENT)
+        }
+        // eslint-disable-next-line no-empty
+        catch{}
+        
 
         return {
             message:"Comment created successfully",

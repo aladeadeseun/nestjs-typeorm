@@ -1,4 +1,6 @@
 /* eslint-disable prettier/prettier */
+import { NotificationType } from '@/notifications/enum/notification-type.enum';
+import { NotificationsService } from '@/notifications/notifications.service';
 import { UserFollow } from '@/user-follows/entities/user-follow.entity';
 import { User } from '@/users/entities/user.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -12,6 +14,8 @@ export class UserFollowsService {
         private readonly usersRepository: Repository<User>,
         @InjectRepository(UserFollow)
         private readonly userFollowsRepository: Repository<UserFollow>,
+
+        private readonly notificationService:NotificationsService
     ){}
 
     async toggleFollow(followingId: number, user: User){
@@ -31,6 +35,8 @@ export class UserFollowsService {
         if(alreadyFollow){
             console.log(alreadyFollow)
             await this.userFollowsRepository.delete(alreadyFollow.id)
+            
+            await this.notificationService.createNotification(user, followingId, NotificationType.UNFOLLOW)
 
             return {message:"You have successfully unfollow " + following.username}
         }
@@ -41,6 +47,8 @@ export class UserFollowsService {
             
             await this.userFollowsRepository.save(userFollow)
             
+            await this.notificationService.createNotification(user, followingId, NotificationType.FOLLOW)
+
             return {message:"You have successfully follow " + following.username}
         }
     }
