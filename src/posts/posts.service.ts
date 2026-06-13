@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 
+import { PostLikesService } from '@/post-likes/post-likes.service';
 import { PostBody } from '@/posts/dto/post-body.dto';
 import { Post } from '@/posts/entities/post.entity';
 import { User } from '@/users/entities/user.entity';
@@ -12,6 +13,7 @@ export class PostsService {
     constructor(
         @InjectRepository(Post)
         private readonly postsRepository: Repository<Post>,
+        private readonly postLikesService: PostLikesService
     ){}
 
     private async getPostToUpdate(postId: number, user: User){

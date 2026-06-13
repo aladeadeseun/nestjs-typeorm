@@ -33,10 +33,12 @@ export class UserFollowsService {
         })
         
         if(alreadyFollow){
-            console.log(alreadyFollow)
+            //console.log(alreadyFollow)
             await this.userFollowsRepository.delete(alreadyFollow.id)
             
-            await this.notificationService.createNotification(user, followingId, NotificationType.UNFOLLOW)
+            await this.notificationService.createNotification(
+                user, followingId, NotificationType.UNFOLLOW, followingId
+            )
 
             return {message:"You have successfully unfollow " + following.username}
         }
@@ -47,7 +49,9 @@ export class UserFollowsService {
             
             await this.userFollowsRepository.save(userFollow)
             
-            await this.notificationService.createNotification(user, followingId, NotificationType.FOLLOW)
+            await this.notificationService.createNotification(
+                user, followingId, NotificationType.FOLLOW, followingId
+            )
 
             return {message:"You have successfully follow " + following.username}
         }

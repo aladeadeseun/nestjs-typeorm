@@ -3,4 +3,5 @@ export enum NotificationType {
   UNFOLLOW = 'UNFOLLOW',
   LIKE = 'LIKE',
   COMMENT = 'COMMENT',
+  UNLIKE = 'UNLIKE',
 }

@@ -16,6 +16,7 @@ import { Post } from '../../posts/entities/post.entity';
 import {Comment} from "../../comments/entities/comment.entity"
 import { UserFollow } from '../../user-follows/entities/user-follow.entity';
 import { Notification } from '../../notifications/entities/notification.entity';
+import { PostLike } from '../../post-likes/entities/post-like.entity';
 
 @Entity({ name: "users" })
 @Index('IDX_USERS_EMAIL', ['email'], { unique: true })
@@ -70,6 +71,9 @@ export class User  {
 
     @OneToMany(() => Notification, (notification) => notification.recipient)
     recipients!:Notification[]
+
+    @OneToMany(()=>PostLike, (postLike) => postLike.user)
+    likes!:PostLike[]
 
     // @UpdateDateColumn({type:'timestamp'})
     // updatedAt!:Date

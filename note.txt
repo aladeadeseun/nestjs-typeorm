@@ -38,3 +38,13 @@ P@s$w0rd
 
 mega99
 P@s$w0rd
+
+yarn run migration:generate src/migrations/AddPostLike
+
+
+Remaining things to do on this project
+
+Add Like to comment
+Fetch User Notification under user controller
+
+Fetch List of user

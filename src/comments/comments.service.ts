@@ -68,18 +68,21 @@ export class CommentsService {
         comment.post = post
         comment.author =user
 
+        const createdComment = await this.commentsRepository.save(comment)
+
         //add the notification but don't wait for response, this should be added to job queue
         //to be added late
         try{
-            await this.notificationService.createNotification(user, post.author.id, NotificationType.COMMENT)
+            await this.notificationService.createNotification(
+                user, post.author.id, NotificationType.COMMENT, createdComment.id
+            )
         }
         // eslint-disable-next-line no-empty
         catch{}
         
-
         return {
             message:"Comment created successfully",
-            data:await this.commentsRepository.save(comment)
+            data:createdComment
         }
     }
 

@@ -1,17 +1,15 @@
 import { Module } from '@nestjs/common';
-import { PostsController } from './posts.controller';
-import { PostsService } from './posts.service';
+import { PostLikesService } from './post-likes.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Post } from '@/posts/entities/post.entity';
-import { PostLikesService } from '@/post-likes/post-likes.service';
 import { PostLike } from '@/post-likes/entities/post-like.entity';
+import { Post } from '@/posts/entities/post.entity';
 import { NotificationsService } from '@/notifications/notifications.service';
 import { Notification } from '@/notifications/entities/notification.entity';
 import { User } from '@/users/entities/user.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Post, PostLike, Notification, User])],
-  controllers: [PostsController],
-  providers: [PostsService, PostLikesService, NotificationsService],
+  providers: [PostLikesService, NotificationsService, PostLikesService],
+  exports: [PostLikesService],
 })
-export class PostsModule {}
+export class PostLikesModule {}

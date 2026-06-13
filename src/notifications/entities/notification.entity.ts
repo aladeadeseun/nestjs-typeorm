@@ -2,13 +2,17 @@
 
 import { NotificationType } from "../../notifications/enum/notification-type.enum";
 import { User } from "../../users/entities/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: "notifications" })
+@Index(['actor', 'recipient', 'entityId'], { unique: true })
 export class Notification  {
 
     @PrimaryGeneratedColumn({unsigned:true, type:"integer"})
     id!: number;
+
+    @Column({type:"integer", unsigned:true})
+    entityId!: number;
 
     @ManyToOne(() => User, (user) => user.recipients, {nullable:false})
     @JoinColumn({ name :"recipientId" })

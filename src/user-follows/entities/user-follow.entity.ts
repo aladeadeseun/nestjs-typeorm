@@ -2,9 +2,10 @@
 
 
 import { User } from "../../users/entities/user.entity";
-import { BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BeforeUpdate, Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({ name: "user_follows" })
+@Index(['following', 'follower'], { unique: true })
 export class UserFollow  {
     @PrimaryGeneratedColumn({unsigned:true, type:"integer"})
     id!: number;

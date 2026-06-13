@@ -16,7 +16,7 @@ export class NotificationsService {
         private readonly usersRepository: Repository<User>,
     ){}
 
-    async createNotification(actor: User, recipientId: number, type:NotificationType){
+    async createNotification(actor: User, recipientId: number, type:NotificationType, entityId: number){
         //check if recipient exist
         const recipient = await this.usersRepository.findOneBy({id:recipientId})
 
@@ -24,9 +24,21 @@ export class NotificationsService {
             throw new NotFoundException({message:"Notification recipient cannot be found."})
         }
 
-        const notification = new Notification()
-        notification.actor = actor
-        notification.recipient = recipient
+        let notification = await this.notificationsRepository.findOne({
+            where:{
+                recipient:{id:recipientId},
+                actor:{id:actor.id},
+                entityId
+            }
+        })
+
+        if(!notification){
+            notification = new Notification()
+            notification.actor = actor
+            notification.recipient = recipient
+            notification.entityId = entityId
+        }
+
         notification.type = type
 
         await this.notificationsRepository.save(notification)
