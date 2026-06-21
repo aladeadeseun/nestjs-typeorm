@@ -10,11 +10,12 @@ import { UserFollowsService } from '@/user-follows/user-follows.service';
 import { UserFollow } from '@/user-follows/entities/user-follow.entity';
 import { NotificationsService } from '@/notifications/notifications.service';
 import { Notification } from '@/notifications/entities/notification.entity';
+import EventsService from '@/events/events.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Profile, UserFollow, Notification])],
   controllers: [UsersController],
-  providers: [UsersService, UserFollowsService, NotificationsService],
+  providers: [UsersService, UserFollowsService, NotificationsService, EventsService],
   exports: [UsersService],
 })
 export class UsersModule {}

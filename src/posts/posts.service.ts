@@ -13,7 +13,7 @@ export class PostsService {
     constructor(
         @InjectRepository(Post)
         private readonly postsRepository: Repository<Post>,
-        private readonly postLikesService: PostLikesService
+        private readonly postLikesService: PostLikesService,
     ){}
 
     private async getPostToUpdate(postId: number, user: User){
@@ -44,6 +44,9 @@ export class PostsService {
     }
 
     async fetchPost(){
+        
+        //this.postsRepository.createQueryBuilder("posts").skip(10).limit(10).getManyAndCount()
+
         return {
             data: await this.postsRepository.find({relations:{author:true}})
         }

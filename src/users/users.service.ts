@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { removePassword } from '@/common/util';
+import EventsService from '@/events/events.service';
 import { CreateUserDto } from '@/users/dto/create-user.dto';
 import { SaveBioDto } from '@/users/dto/save-bio.dto';
 import { Profile } from '@/users/entities/profile.entity';
@@ -19,6 +20,8 @@ export class UsersService {
         private readonly usersRepository: Repository<User>,
         @InjectRepository(Profile)
         private readonly profilesRepository: Repository<Profile>,
+
+        private eventsService: EventsService
     ){}
 
     private selectUserByEmailOrUsernameQueryBuilder(email: string, username: string, toSelect:string[]){
@@ -60,6 +63,8 @@ export class UsersService {
         const user = new User();
 
         Object.assign(user, createUserDto)
+
+        this.eventsService.emitUserRegistered(user)
 
         return {
             message:"User successfully created",

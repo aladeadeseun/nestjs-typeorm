@@ -12,6 +12,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from '@/auth/guards/auth.guard';
 import { NotificationsService } from '@/notifications/notifications.service';
 import { Notification } from '@/notifications/entities/notification.entity';
+import EventsService from '@/events/events.service';
 
 
 @Module({
@@ -27,7 +28,8 @@ import { Notification } from '@/notifications/entities/notification.entity';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
-    AuthService, UsersService, NotificationsService
+    AuthService, UsersService, 
+    NotificationsService, EventsService
   ],
 })
 export class AuthModule {}

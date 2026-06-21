@@ -14,6 +14,7 @@ import { CommentsModule } from './comments/comments.module';
 import { UserFollowsModule } from './user-follows/user-follows.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { PostLikesModule } from './post-likes/post-likes.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
 	imports: [
@@ -34,6 +35,7 @@ import { PostLikesModule } from './post-likes/post-likes.module';
 		UserFollowsModule,
 		NotificationsModule,
 		PostLikesModule,
+		EventsModule,
 	],
 	controllers: [AppController],
 	providers: [
