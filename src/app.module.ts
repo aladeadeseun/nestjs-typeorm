@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
@@ -15,6 +15,7 @@ import { UserFollowsModule } from './user-follows/user-follows.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { PostLikesModule } from './post-likes/post-likes.module';
 import { EventsModule } from './events/events.module';
+import { LoggerMiddleware } from '@/common/middleware/logger.middleware';
 
 @Module({
 	imports: [
@@ -46,4 +47,9 @@ import { EventsModule } from './events/events.module';
     	},
 	],
 })
-export class AppModule { }
+export class AppModule implements NestModule{ 
+	configure(consumer: MiddlewareConsumer) {
+		//This will apply to all routes
+		consumer.apply(LoggerMiddleware).forRoutes("*")
+	}
+}

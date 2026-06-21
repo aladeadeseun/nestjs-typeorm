@@ -8,10 +8,14 @@ import { ResponseInterceptor } from '@/common/interceptors/response.interceptor'
 import { GlobalExceptionFilter } from '@/common/filters/global-exception.filter';
 import helmet from 'helmet';
 import { CORS_ORIGIN } from '@/common/constant';
+import { LoggingInterceptor } from '@/common/interceptors/logging.interceptor';
 
 async function bootstrap() {
+	//const logger = new Logger("Bootstrap")
 
-	const app = await NestFactory.create(AppModule);
+	const app = await NestFactory.create(AppModule, {
+		logger:['error', 'debug', 'fatal', 'log', 'verbose', 'warn']
+	});
 	// somewhere in your initialization file
 	app.use(helmet());
 	app.enableCors({origin:CORS_ORIGIN,credentials: true})
@@ -31,7 +35,7 @@ async function bootstrap() {
 		}),
 	);
 
-	app.useGlobalInterceptors(new ResponseInterceptor());
+	app.useGlobalInterceptors(new ResponseInterceptor(), new LoggingInterceptor());
 
 	app.useGlobalFilters(new GlobalExceptionFilter());
 

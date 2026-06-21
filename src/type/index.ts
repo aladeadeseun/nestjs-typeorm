@@ -7,7 +7,8 @@ export type IUser = Omit<User, "hasPassword" | "password">;
 export type IUserResponse = IUser & { token:string };
 
 export interface AuthRequest extends Request{
-    user?:IUser | null
+    user?:IUser | null,
+    startTime: number
 }
 
 export type PaginationFormat = {
